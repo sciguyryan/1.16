@@ -5,6 +5,8 @@ import cofh.ensorcellation.enchantment.override.FrostWalkerEnchantmentImp;
 import cofh.lib.util.Utils;
 import cofh.lib.util.constants.NBTTags;
 import cofh.lib.util.helpers.MathHelper;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.FrostWalkerEnchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -34,6 +36,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.ItemFishedEvent;
@@ -47,8 +50,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 
-import static cofh.lib.util.Utils.getHeldEnchantmentLevel;
-import static cofh.lib.util.Utils.getMaxEquippedEnchantmentLevel;
+import static cofh.lib.util.Utils.*;
 import static cofh.lib.util.constants.Constants.*;
 import static cofh.lib.util.references.EnsorcIDs.ID_REACH;
 import static cofh.lib.util.references.EnsorcIDs.ID_VITALITY;
@@ -523,6 +525,16 @@ public class CommonEvents {
     }
     // endregion
 
+    @SubscribeEvent(priority = EventPriority.NORMAL)
+    public static void itemDespawn(ItemExpireEvent event) {
+        ItemStack stack = event.getEntityItem().getItem();
+        int aeonianLevel = getItemEnchantmentLevel(AEONIAN, stack);
+        if (aeonianLevel > 0) {
+            event.setExtraLife(Integer.MAX_VALUE);
+            event.setCanceled(true);
+        }
+    }
+
     @SubscribeEvent
     public static void handleTickEndEvent(TickEvent.ServerTickEvent event) {
 
@@ -545,5 +557,11 @@ public class CommonEvents {
         }
         return stack;
     }
+
+    private boolean hasEnchantment(Enchantment enchant, LivingEntity entity) {
+
+        return EnchantmentHelper.getMaxEnchantmentLevel(enchant, entity) > 0;
+    }
+
     // endregion
 }

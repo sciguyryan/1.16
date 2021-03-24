@@ -14,7 +14,9 @@ import org.apache.logging.log4j.Logger;
 
 import static cofh.lib.util.constants.Constants.ID_ENSORCELLATION;
 
+@Mod.EventBusSubscriber(modid = ID_ENSORCELLATION)
 @Mod(ID_ENSORCELLATION)
+
 public class Ensorcellation {
 
     public static final Logger LOG = LogManager.getLogger(ID_ENSORCELLATION);

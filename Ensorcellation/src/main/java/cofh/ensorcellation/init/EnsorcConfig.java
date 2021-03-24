@@ -382,7 +382,6 @@ public class EnsorcConfig {
         SERVER_CONFIG.pop();
 
         SERVER_CONFIG.push("Volley");
-
         enableVolley = SERVER_CONFIG
                 .comment("If TRUE, the Volley Enchantment is available for various Bows.")
                 .define("Enable", true);
@@ -490,6 +489,15 @@ public class EnsorcConfig {
         permanentSoulbound = SERVER_CONFIG
                 .comment("If TRUE, the Soulbound Enchantment is permanent (and will remove excess levels when triggered).")
                 .define("Permanent", true);
+        SERVER_CONFIG.pop();
+
+        SERVER_CONFIG.push("Aeonian");
+        enableAeonian = SERVER_CONFIG
+                .comment("If TRUE, the Aeonian Enchantment is available.")
+                .define("Enable", true);
+        treasureAeonian = SERVER_CONFIG
+                .comment(treasure)
+                .define("Treasure", false);
         SERVER_CONFIG.pop();
 
         // CURSES
@@ -823,6 +831,10 @@ public class EnsorcConfig {
             ((EnchantmentCoFH) SOULBOUND).setMaxLevel(levelSoulbound.get());
             SoulboundEnchantment.permanent = permanentSoulbound.get();
         }
+        if (AEONIAN instanceof EnchantmentCoFH) {
+            ((EnchantmentCoFH) AEONIAN).setEnable(enableAeonian.get());
+            ((EnchantmentCoFH) AEONIAN).setTreasureEnchantment(treasureAeonian.get());
+        }
         // CURSES
         if (CURSE_FOOL instanceof EnchantmentCoFH) {
             ((EnchantmentCoFH) CURSE_FOOL).setEnable(enableCurseFool.get());
@@ -1038,6 +1050,9 @@ public class EnsorcConfig {
     private static BooleanValue treasureSoulbound;
     private static IntValue levelSoulbound;
     private static BooleanValue permanentSoulbound;
+
+    private static BooleanValue enableAeonian;
+    private static BooleanValue treasureAeonian;
 
     // CURSES
     private static BooleanValue enableCurseFool;

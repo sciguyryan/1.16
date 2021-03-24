@@ -74,6 +74,7 @@ public class EnsorcIDs {
 
     // MISC
     public static final String ID_SOULBOUND = "soulbound";
+    public static final String ID_AEONIAN = "aeonian";
 
     // CURSES
     public static final String ID_CURSE_FOOL = "curse_fool";

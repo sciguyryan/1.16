@@ -76,6 +76,7 @@ public class EnsorcEnchantments {
         // TODO: Revisit
         // ENCHANTMENTS.register(ID_HOLDING, HoldingEnchantment::new);
         ENCHANTMENTS.register(ID_SOULBOUND, SoulboundEnchantment::new);
+        ENCHANTMENTS.register(ID_AEONIAN, AeonianEnchantment::new);
 
         // CURSES
         ENCHANTMENTS.register(ID_CURSE_FOOL, CurseFoolEnchant::new);

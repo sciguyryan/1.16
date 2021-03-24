@@ -121,6 +121,9 @@ public class EnsorcReferences {
     @ObjectHolder(ID_SOULBOUND)
     public static final Enchantment SOULBOUND = null;
 
+    @ObjectHolder(ID_AEONIAN)
+    public static final Enchantment AEONIAN = null;
+
     // CURSES
     @ObjectHolder(ID_CURSE_FOOL)
     public static final Enchantment CURSE_FOOL = null;

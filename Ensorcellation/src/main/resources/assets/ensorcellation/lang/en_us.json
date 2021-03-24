@@ -108,5 +108,8 @@
   "enchantment.ensorcellation.vorpal.desc": "Randomly performs powerful attacks and decapitations.",
 
   "enchantment.ensorcellation.weeding": "Weeding",
-  "enchantment.ensorcellation.weeding.desc": "Clears plants while tilling blocks."
+  "enchantment.ensorcellation.weeding.desc": "Clears plants while tilling blocks.",
+
+  "enchantment.ensorcellation.aeonian": "Aeonian",
+  "enchantment.ensorcellation.aeonian.desc": "The item will never naturally despawn."
 }
