@@ -2,6 +2,8 @@ package cofh.ensorcellation.enchantment;
 
 import cofh.core.init.CoreEnchantments;
 import cofh.lib.enchantment.EnchantmentCoFH;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.inventory.EquipmentSlotType;
 
 public class CursePhotophobiaEnchantment extends EnchantmentCoFH {
@@ -28,6 +30,12 @@ public class CursePhotophobiaEnchantment extends EnchantmentCoFH {
     public boolean isCurse() {
 
         return true;
+    }
+
+    @Override
+    public boolean canApplyTogether(Enchantment ench) {
+
+        return super.canApplyTogether(ench) && ench != Enchantments.MENDING;
     }
 
 }
