@@ -123,6 +123,8 @@ public class Constants {
     public static final int TANK_LARGE = BUCKET_VOLUME * 16;
 
     public static final EquipmentSlotType[] ARMOR_SLOTS = new EquipmentSlotType[]{HEAD, CHEST, LEGS, FEET};
+    public static final EquipmentSlotType[] HAND_SLOTS = new EquipmentSlotType[]{MAINHAND, OFFHAND};
+    public static final EquipmentSlotType[] ALL_SLOTS = new EquipmentSlotType[]{HEAD, CHEST, LEGS, FEET, MAINHAND, OFFHAND};
     public static final Direction[] DIRECTIONS = Direction.values();
     // endregion
 

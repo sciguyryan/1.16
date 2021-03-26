@@ -1,5 +1,6 @@
 package cofh.ensorcellation.event;
 
+import cofh.ensorcellation.Ensorcellation;
 import cofh.ensorcellation.enchantment.*;
 import cofh.ensorcellation.enchantment.override.FrostWalkerEnchantmentImp;
 import cofh.lib.util.Utils;
@@ -32,6 +33,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.FoodStats;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.FakePlayer;
@@ -542,6 +544,54 @@ public class CommonEvents {
             FireRebukeEnchantment.setFireToMobs();
         }
     }
+
+    public static boolean isInDarkness(LivingEntity e) {
+        World world = e.world;
+        int i = world.getLight(e.getPosition());
+        return world.isThundering() || i < 8;
+    }
+
+    // region PLAYER
+    @SubscribeEvent
+    public static void handlePlayerTickEndEvent(TickEvent.PlayerTickEvent event) {
+
+        PlayerEntity player = event.player;
+        World world = player.world;
+        if (world.isRemote) {
+            return;
+        }
+
+        for (EquipmentSlotType slot : ALL_SLOTS) {
+            if (world.getWorldInfo().getGameTime() % 350 != 0) {
+                continue;
+            }
+
+            ItemStack stack = player.getItemStackFromSlot(slot);
+            int level = EnchantmentHelper.getEnchantmentLevel(CURSE_PHOTOPHOBIA, stack);
+            if (level == 0) {
+                continue;
+            }
+
+            int damage = stack.getDamage();
+
+            if (isInDarkness(player)) {
+                if (damage == 0) {
+                    continue;
+                }
+
+                --damage;
+            } else {
+                ++damage;
+            }
+
+            stack.setDamage(damage);
+
+            if (damage > stack.getMaxDamage()) {
+                player.setItemStackToSlot(slot, ItemStack.EMPTY);
+            }
+        }
+    }
+    // endregion
 
     // region HELPERS
     private static ItemStack stealArmor(LivingEntity living) {

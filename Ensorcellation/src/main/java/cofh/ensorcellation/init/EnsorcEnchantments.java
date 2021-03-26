@@ -81,6 +81,7 @@ public class EnsorcEnchantments {
         // CURSES
         ENCHANTMENTS.register(ID_CURSE_FOOL, CurseFoolEnchant::new);
         ENCHANTMENTS.register(ID_CURSE_MERCY, CurseMercyEnchantment::new);
+        ENCHANTMENTS.register(ID_CURSE_PHOTOPHOBIA, CursePhotophobiaEnchantment::new);
     }
 
     private static void registerOverrides() {

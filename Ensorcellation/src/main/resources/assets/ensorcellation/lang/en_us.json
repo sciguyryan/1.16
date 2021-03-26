@@ -111,5 +111,8 @@
   "enchantment.ensorcellation.weeding.desc": "Clears plants while tilling blocks.",
 
   "enchantment.ensorcellation.aeonian": "Aeonian",
-  "enchantment.ensorcellation.aeonian.desc": "The item will never naturally despawn."
+  "enchantment.ensorcellation.aeonian.desc": "The item will never naturally despawn.",
+
+  "enchantment.ensorcellation.curse_photophobia": "Curse of Photophobia",
+  "enchantment.ensorcellation.curse_photophobia.desc": "Equipment bearing this enchantment will slowly be degraded by bright light, though perhaps in the darkness it will thrive."
 }

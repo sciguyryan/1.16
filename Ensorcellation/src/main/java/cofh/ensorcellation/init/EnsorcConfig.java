@@ -513,6 +513,12 @@ public class EnsorcConfig {
                 .define("Enable", true);
         SERVER_CONFIG.pop();
 
+        SERVER_CONFIG.push("Curse of Photophobia");
+        enableCursePhotophobia = SERVER_CONFIG
+                .comment("If TRUE, the Curse of Photophobia Enchantment is available for various Weapons.")
+                .define("Enable", true);
+        SERVER_CONFIG.pop();
+
         SERVER_CONFIG.pop();
     }
 
@@ -842,6 +848,9 @@ public class EnsorcConfig {
         if (CURSE_MERCY instanceof EnchantmentCoFH) {
             ((EnchantmentCoFH) CURSE_MERCY).setEnable(enableCurseMercy.get());
         }
+        if (CURSE_PHOTOPHOBIA instanceof EnchantmentCoFH) {
+            ((EnchantmentCoFH) CURSE_PHOTOPHOBIA).setEnable(enableCursePhotophobia.get());
+        }
     }
 
     private static void refreshOverrideConfig() {
@@ -1058,6 +1067,8 @@ public class EnsorcConfig {
     private static BooleanValue enableCurseFool;
 
     private static BooleanValue enableCurseMercy;
+
+    private static BooleanValue enableCursePhotophobia;
 
     // OVERRIDES
     private static BooleanValue enableProtection;
