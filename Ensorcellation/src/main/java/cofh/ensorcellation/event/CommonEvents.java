@@ -1,6 +1,5 @@
 package cofh.ensorcellation.event;
 
-import cofh.ensorcellation.Ensorcellation;
 import cofh.ensorcellation.enchantment.*;
 import cofh.ensorcellation.enchantment.override.FrostWalkerEnchantmentImp;
 import cofh.lib.util.Utils;
@@ -462,15 +461,15 @@ public class CommonEvents {
         int encPilfer = getHeldEnchantmentLevel(player, PILFERING);
         if (encPilfer > 0 && entity instanceof LivingEntity) {
             LivingEntity living = (LivingEntity) entity;
-            ItemStack armor = stealArmor(living);
-            if (armor.isEmpty()) {
+            ItemStack equipment = stealEquipment(living);
+            if (equipment.isEmpty()) {
                 return;
             }
-            ItemEntity armorEntity = new ItemEntity(living.world, living.getPosX(), living.getPosY() + 0.5D, living.getPosZ(), armor);
-            armorEntity.setOwnerId(player.getUniqueID());
-            armorEntity.setPickupDelay(5);
-            armorEntity.world.addEntity(armorEntity);
-            armorEntity.setPosition(player.getPosX(), player.getPosY(), player.getPosZ());
+            ItemEntity equipmentEntity = new ItemEntity(living.world, living.getPosX(), living.getPosY() + 0.5D, living.getPosZ(), equipment);
+            equipmentEntity.setOwnerId(player.getUniqueID());
+            equipmentEntity.setPickupDelay(5);
+            equipmentEntity.world.addEntity(equipmentEntity);
+            equipmentEntity.setPosition(player.getPosX(), player.getPosY(), player.getPosZ());
         }
     }
     // endregion
@@ -594,10 +593,10 @@ public class CommonEvents {
     // endregion
 
     // region HELPERS
-    private static ItemStack stealArmor(LivingEntity living) {
+    private static ItemStack stealEquipment(LivingEntity living) {
 
         ItemStack stack = ItemStack.EMPTY;
-        for (EquipmentSlotType slot : ARMOR_SLOTS) {
+        for (EquipmentSlotType slot : ALL_SLOTS) {
             if (living.getItemStackFromSlot(slot).isEmpty()) {
                 continue;
             }
