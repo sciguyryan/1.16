@@ -519,6 +519,21 @@ public class EnsorcConfig {
                 .define("Enable", true);
         SERVER_CONFIG.pop();
 
+        SERVER_CONFIG.push("Curse of the Alchemist");
+        enableCurseAlchemist = SERVER_CONFIG
+                .comment("If TRUE, the Curse of the Alchemist is available for various Weapons.")
+                .define("Enable", true);
+        effectTriggerCurseAlchemist = SERVER_CONFIG
+                .comment("Adjust this value to set the trigger rate for this Enchantment (in percentage).")
+                .defineInRange("Effect Trigger Chance", 40, 1, 100);
+        effectTriggerOnTargetCurseAlchemist = SERVER_CONFIG
+                .comment("Adjust this value to set the chance of the effect being applied to the attacker (in percentage).")
+                .defineInRange("Effect Trigger Against Target", 25, 1, 100);
+        effectDurationCurseAlchemist = SERVER_CONFIG
+                .comment("Adjust this value to set how long the effect should last for (in seconds).")
+                .defineInRange("Effect Duration", 15, 1, 60);
+        SERVER_CONFIG.pop();
+
         SERVER_CONFIG.pop();
     }
 
@@ -851,6 +866,12 @@ public class EnsorcConfig {
         if (CURSE_PHOTOPHOBIA instanceof EnchantmentCoFH) {
             ((EnchantmentCoFH) CURSE_PHOTOPHOBIA).setEnable(enableCursePhotophobia.get());
         }
+        if (CURSE_ALCHEMIST instanceof EnchantmentCoFH) {
+            ((EnchantmentCoFH) CURSE_ALCHEMIST).setEnable(enableCurseAlchemist.get());
+            CurseAlchemistEnchant.effectTrigger = effectTriggerCurseAlchemist.get();
+            CurseAlchemistEnchant.effectTriggerOnTarget = effectTriggerOnTargetCurseAlchemist.get();
+            CurseAlchemistEnchant.effectDuration = effectDurationCurseAlchemist.get();
+        }
     }
 
     private static void refreshOverrideConfig() {
@@ -1069,6 +1090,11 @@ public class EnsorcConfig {
     private static BooleanValue enableCurseMercy;
 
     private static BooleanValue enableCursePhotophobia;
+
+    private static BooleanValue enableCurseAlchemist;
+    private static IntValue effectTriggerCurseAlchemist;
+    private static IntValue effectTriggerOnTargetCurseAlchemist;
+    private static IntValue effectDurationCurseAlchemist;
 
     // OVERRIDES
     private static BooleanValue enableProtection;

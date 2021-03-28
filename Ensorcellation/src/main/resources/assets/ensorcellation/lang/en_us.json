@@ -114,5 +114,8 @@
   "enchantment.ensorcellation.aeonian.desc": "The item will never naturally despawn.",
 
   "enchantment.ensorcellation.curse_photophobia": "Curse of Photophobia",
-  "enchantment.ensorcellation.curse_photophobia.desc": "Equipment bearing this enchantment will slowly be degraded by bright light, though perhaps in the darkness it will thrive."
+  "enchantment.ensorcellation.curse_photophobia.desc": "Equipment bearing this enchantment will slowly be degraded by bright light, though perhaps in the darkness it will thrive.",
+
+  "enchantment.ensorcellation.curse_alchemist": "Curse of the Alchemist",
+  "enchantment.ensorcellation.curse_alchemist.desc": "A weapon bearing this enchantment will randomly impart an effect to either the attacker or the attacker's target. This could be a blessing... or a CURSE."
 }

@@ -134,4 +134,7 @@ public class EnsorcReferences {
     @ObjectHolder(ID_CURSE_PHOTOPHOBIA)
     public static final Enchantment CURSE_PHOTOPHOBIA = null;
 
+    @ObjectHolder(ID_CURSE_ALCHEMIST)
+    public static final Enchantment CURSE_ALCHEMIST = null;
+
 }

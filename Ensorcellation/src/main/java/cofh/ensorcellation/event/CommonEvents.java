@@ -1,7 +1,9 @@
 package cofh.ensorcellation.event;
 
+import cofh.ensorcellation.Ensorcellation;
 import cofh.ensorcellation.enchantment.*;
 import cofh.ensorcellation.enchantment.override.FrostWalkerEnchantmentImp;
+import cofh.ensorcellation.init.EnsorcConfig;
 import cofh.lib.util.Utils;
 import cofh.lib.util.constants.NBTTags;
 import cofh.lib.util.helpers.MathHelper;
@@ -28,6 +30,7 @@ import net.minecraft.item.Food;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.*;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.DamageSource;
@@ -50,12 +53,14 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
+import java.util.Random;
 
 import static cofh.lib.util.Utils.*;
 import static cofh.lib.util.constants.Constants.*;
 import static cofh.lib.util.references.EnsorcIDs.ID_REACH;
 import static cofh.lib.util.references.EnsorcIDs.ID_VITALITY;
 import static cofh.lib.util.references.EnsorcReferences.*;
+import static cofh.ensorcellation.enchantment.CurseAlchemistEnchant.PotionEffect;
 import static net.minecraft.enchantment.Enchantments.EFFICIENCY;
 import static net.minecraft.enchantment.Enchantments.FROST_WALKER;
 import static net.minecraft.entity.ai.attributes.AttributeModifier.Operation.ADDITION;
@@ -78,9 +83,12 @@ public class CommonEvents {
         LivingEntity entity = event.getEntityLiving();
         DamageSource source = event.getSource();
         Entity attacker = source.getTrueSource();
-        // MAGIC EDGE
+
         if (attacker instanceof LivingEntity) {
-            int encMagicEdge = getHeldEnchantmentLevel((LivingEntity) attacker, MAGIC_EDGE);
+            LivingEntity livingAttacker = (LivingEntity) attacker;
+
+            // MAGIC EDGE
+            int encMagicEdge = getHeldEnchantmentLevel(livingAttacker, MAGIC_EDGE);
             if (encMagicEdge > 0 && !source.isMagicDamage() && source.damageType.equals(DAMAGE_PLAYER)) {
                 event.setCanceled(true);
                 entity.attackEntityFrom(event.getSource().setDamageBypassesArmor().setMagicDamage(), event.getAmount() + MagicEdgeEnchantment.getExtraDamage(encMagicEdge));
@@ -278,6 +286,7 @@ public class CommonEvents {
         if (event.isCanceled()) {
             return;
         }
+
         LivingEntity entity = event.getEntityLiving();
         DamageSource source = event.getSource();
         Entity attacker = source.getTrueSource();
@@ -329,6 +338,21 @@ public class CommonEvents {
         int encInstigating = getHeldEnchantmentLevel(living, INSTIGATING);
         if (encInstigating > 0 && entity.getHealth() >= entity.getMaxHealth()) {
             event.setAmount(event.getAmount() * (1 + encInstigating));
+        }
+
+        // ALCHEMIST'S CURSE
+        Random rng = living.getRNG();
+        int encAlchemistCurse = getHeldEnchantmentLevel(living, CURSE_ALCHEMIST);
+        if (encAlchemistCurse > 0 && rng.nextInt(100) < CurseAlchemistEnchant.effectTrigger) {
+            // Are we targeting the attacker or the target of the attack?
+            LivingEntity target = (rng.nextInt(100) < CurseAlchemistEnchant.effectTriggerOnTarget) ? living : entity;
+
+            PotionEffect eff = CurseAlchemistEnchant.applicableEffects[rng.nextInt(CurseAlchemistEnchant.applicableEffects.length)];
+            int amplifier = rng.nextInt(eff.maxAmplifier);
+            EffectInstance instance = new EffectInstance(eff.effect.getEffect(), CurseAlchemistEnchant.effectDuration*20, amplifier, false, true);
+            if (target.isPotionApplicable(instance)) {
+                target.addPotionEffect(instance);
+            }
         }
     }
 

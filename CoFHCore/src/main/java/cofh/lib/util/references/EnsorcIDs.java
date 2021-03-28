@@ -80,5 +80,6 @@ public class EnsorcIDs {
     public static final String ID_CURSE_FOOL = "curse_fool";
     public static final String ID_CURSE_MERCY = "curse_mercy";
     public static final String ID_CURSE_PHOTOPHOBIA = "curse_photophobia";
+    public static final String ID_CURSE_ALCHEMIST = "curse_alchemist";
 
 }
