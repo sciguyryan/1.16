@@ -3,7 +3,6 @@ package cofh.ensorcellation.event;
 import cofh.ensorcellation.Ensorcellation;
 import cofh.ensorcellation.enchantment.*;
 import cofh.ensorcellation.enchantment.override.FrostWalkerEnchantmentImp;
-import cofh.ensorcellation.init.EnsorcConfig;
 import cofh.lib.util.Utils;
 import cofh.lib.util.constants.NBTTags;
 import cofh.lib.util.helpers.MathHelper;
@@ -24,7 +23,9 @@ import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Food;
 import net.minecraft.item.ItemStack;
@@ -35,11 +36,16 @@ import net.minecraft.stats.Stats;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.FoodStats;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
@@ -52,6 +58,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -575,44 +582,81 @@ public class CommonEvents {
     }
 
     // region PLAYER
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public static void handlePlayerTickEndEvent(TickEvent.PlayerTickEvent event) {
 
         PlayerEntity player = event.player;
+        if (player == null) {
+            return;
+        }
+
         World world = player.world;
         if (world.isRemote) {
             return;
         }
 
-        for (EquipmentSlotType slot : ALL_SLOTS) {
-            if (world.getWorldInfo().getGameTime() % 350 != 0) {
-                continue;
-            }
-
-            ItemStack stack = player.getItemStackFromSlot(slot);
-            int level = EnchantmentHelper.getEnchantmentLevel(CURSE_PHOTOPHOBIA, stack);
-            if (level == 0) {
-                continue;
-            }
-
-            int damage = stack.getDamage();
-
-            if (isInDarkness(player)) {
-                if (damage == 0) {
+        int encPhotophobia = getMaxEquippedEnchantmentLevel(player, CURSE_PHOTOPHOBIA);
+        if (encPhotophobia > 0) {
+            for (EquipmentSlotType slot : ALL_SLOTS) {
+                if (world.getWorldInfo().getGameTime() % 350 != 0) {
                     continue;
                 }
 
-                --damage;
-            } else {
-                ++damage;
-            }
+                ItemStack stack = player.getItemStackFromSlot(slot);
+                int level = EnchantmentHelper.getEnchantmentLevel(CURSE_PHOTOPHOBIA, stack);
+                if (level == 0) {
+                    continue;
+                }
 
-            stack.setDamage(damage);
+                int damage = stack.getDamage();
 
-            if (damage > stack.getMaxDamage()) {
-                player.setItemStackToSlot(slot, ItemStack.EMPTY);
+                if (isInDarkness(player)) {
+                    if (damage == 0) {
+                        continue;
+                    }
+
+                    --damage;
+                } else {
+                    ++damage;
+                }
+
+                stack.setDamage(damage);
+
+                if (damage > stack.getMaxDamage()) {
+                    player.setItemStackToSlot(slot, ItemStack.EMPTY);
+                }
             }
         }
+
+        int encDeflection = getMaxEquippedEnchantmentLevel(player, DEFLECTION);
+        if (encDeflection > 0) {
+            int triggerChance = encDeflection * DeflectionEnchantment.chancePerLevel;
+
+            AxisAlignedBB bb = player.getBoundingBox().grow(2, 2, 2);
+            List<Entity> arrows = world.getEntitiesWithinAABB(AbstractArrowEntity.class, bb);
+            ArrayList<Entity> arrowsToRemove = new ArrayList<>();
+            for (Entity arrow : arrows) {
+                boolean canRemove = true;
+                int sourceID = ((AbstractArrowEntity) arrow).field_234610_c_;
+                if (!DeflectionEnchantment.affectsPlayerArrows && sourceID != 0) {
+                    Entity source = world.getEntityByID(sourceID);
+                    canRemove = !(source instanceof PlayerEntity);
+                }
+
+                //this.world.createExplosion((Entity)null, this.getPosX(), this.getPosY(), this.getPosZ(), 6.0F, Explosion.Mode.DESTROY);
+
+                if (canRemove && player.getRNG().nextInt(100) < triggerChance) {
+                    arrowsToRemove.add(arrow);
+                }
+            }
+
+            // TODO - damage armour so that the effect is not free.
+
+            for (Entity arrow : arrowsToRemove) {
+                arrow.remove();
+            }
+        }
+
     }
     // endregion
 

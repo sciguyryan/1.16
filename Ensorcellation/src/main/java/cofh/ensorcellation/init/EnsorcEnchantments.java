@@ -34,6 +34,7 @@ public class EnsorcEnchantments {
         // CHESTPLATE
         ENCHANTMENTS.register(ID_REACH, ReachEnchantment::new);
         ENCHANTMENTS.register(ID_VITALITY, VitalityEnchantment::new);
+        ENCHANTMENTS.register(ID_DEFLECTION, VitalityEnchantment::new);
 
         // WEAPONS
         ENCHANTMENTS.register(ID_DAMAGE_ENDER, DamageEnderEnchantment::new);

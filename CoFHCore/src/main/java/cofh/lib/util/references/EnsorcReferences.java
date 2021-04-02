@@ -43,6 +43,9 @@ public class EnsorcReferences {
     @ObjectHolder(ID_VITALITY)
     public static final Enchantment VITALITY = null;
 
+    @ObjectHolder(ID_DEFLECTION)
+    public static final Enchantment DEFLECTION = null;
+
     // WEAPONS
     @ObjectHolder(ID_DAMAGE_ENDER)
     public static final Enchantment DAMAGE_ENDER = null;

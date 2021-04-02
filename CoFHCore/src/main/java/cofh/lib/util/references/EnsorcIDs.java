@@ -35,6 +35,7 @@ public class EnsorcIDs {
     // CHESTPLATE
     public static final String ID_REACH = "reach";
     public static final String ID_VITALITY = "vitality";
+    public static final String ID_DEFLECTION = "deflection";
 
     // WEAPONS
     public static final String ID_DAMAGE_ENDER = "damage_ender";

@@ -103,6 +103,24 @@ public class EnsorcConfig {
                 .define("Mobs Teleport Players", DisplacementEnchantment.mobsAffectPlayers);
         SERVER_CONFIG.pop();
 
+        SERVER_CONFIG.push("Deflection");
+        enableDeflection = SERVER_CONFIG
+                .comment("If TRUE, the Deflection Enchantment is available for Armor, Shields, and Horse Armor.")
+                .define("Enable", true);
+        treasureDeflection = SERVER_CONFIG
+                .comment(treasure)
+                .define("Treasure", true);
+        levelDeflection = SERVER_CONFIG
+                .comment(level)
+                .defineInRange("Max Level", 5, 1, MAX_ENCHANT_LEVEL);
+        chanceDeflection = SERVER_CONFIG
+                .comment("Adjust this value to set the chance per level of the Enchantment triggering (in percentage).")
+                .defineInRange("Effect Chance", 20, 1, 100);
+        allowPlayerArrowDeflection = SERVER_CONFIG
+                .comment("If TRUE, arrows from players will be affected by this enchantment.")
+                .define("Affects Player Arrows", DeflectionEnchantment.affectsPlayerArrows);
+        SERVER_CONFIG.pop();
+
         SERVER_CONFIG.push("Flaming Rebuke");
         enableFireRebuke = SERVER_CONFIG
                 .comment("If TRUE, the Flaming Rebuke Enchantment is available for Armor, Shields, and Horse Armor.")
@@ -688,6 +706,13 @@ public class EnsorcConfig {
             DisplacementEnchantment.chance = chanceDisplacement.get();
             DisplacementEnchantment.mobsAffectPlayers = allowMobsDisplacement.get();
         }
+        if (DEFLECTION instanceof EnchantmentCoFH) {
+            ((EnchantmentCoFH) DEFLECTION).setEnable(enableDeflection.get());
+            ((EnchantmentCoFH) DEFLECTION).setTreasureEnchantment(treasureDeflection.get());
+            ((EnchantmentCoFH) DEFLECTION).setMaxLevel(levelDeflection.get());
+            DeflectionEnchantment.chancePerLevel = chanceDeflection.get();
+            DeflectionEnchantment.affectsPlayerArrows = allowPlayerArrowDeflection.get();
+        }
         if (FIRE_REBUKE instanceof EnchantmentCoFH) {
             ((EnchantmentCoFH) FIRE_REBUKE).setEnable(enableFireRebuke.get());
             ((EnchantmentCoFH) FIRE_REBUKE).setTreasureEnchantment(treasureFireRebuke.get());
@@ -945,6 +970,12 @@ public class EnsorcConfig {
     private static IntValue levelDisplacement;
     private static IntValue chanceDisplacement;
     private static BooleanValue allowMobsDisplacement;
+
+    private static BooleanValue enableDeflection;
+    private static BooleanValue treasureDeflection;
+    private static IntValue levelDeflection;
+    private static IntValue chanceDeflection;
+    private static BooleanValue allowPlayerArrowDeflection;
 
     private static BooleanValue enableFireRebuke;
     private static BooleanValue treasureFireRebuke;
