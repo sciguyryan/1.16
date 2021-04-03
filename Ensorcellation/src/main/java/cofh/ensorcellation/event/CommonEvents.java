@@ -37,6 +37,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.Explosion;
@@ -622,42 +623,66 @@ public class CommonEvents {
 
                 stack.setDamage(damage);
 
-                if (damage > stack.getMaxDamage()) {
+                if (damage >= stack.getMaxDamage()) {
                     player.setItemStackToSlot(slot, ItemStack.EMPTY);
                 }
             }
         }
+    }
+    // endregion
 
-        int encDeflection = getMaxEquippedEnchantmentLevel(player, DEFLECTION);
-        if (encDeflection > 0) {
-            int triggerChance = encDeflection * DeflectionEnchantment.chancePerLevel;
+    // region PROJECTILES
+    @SubscribeEvent(priority = EventPriority.NORMAL)
+    public static void handleProjectileImpact(ProjectileImpactEvent event) {
 
-            AxisAlignedBB bb = player.getBoundingBox().grow(2, 2, 2);
-            List<Entity> arrows = world.getEntitiesWithinAABB(AbstractArrowEntity.class, bb);
-            ArrayList<Entity> arrowsToRemove = new ArrayList<>();
-            for (Entity arrow : arrows) {
-                boolean canRemove = true;
-                int sourceID = ((AbstractArrowEntity) arrow).field_234610_c_;
-                if (!DeflectionEnchantment.affectsPlayerArrows && sourceID != 0) {
-                    Entity source = world.getEntityByID(sourceID);
-                    canRemove = !(source instanceof PlayerEntity);
-                }
-
-                //this.world.createExplosion((Entity)null, this.getPosX(), this.getPosY(), this.getPosZ(), 6.0F, Explosion.Mode.DESTROY);
-
-                if (canRemove && player.getRNG().nextInt(100) < triggerChance) {
-                    arrowsToRemove.add(arrow);
-                }
-            }
-
-            // TODO - damage armour so that the effect is not free.
-
-            for (Entity arrow : arrowsToRemove) {
-                arrow.remove();
-            }
+        if (!(event instanceof ProjectileImpactEvent.Arrow)) {
+            return;
         }
 
+        RayTraceResult ray = event.getRayTraceResult();
+        if (!(ray instanceof EntityRayTraceResult)) {
+            return;
+        }
+
+        Entity target = ((EntityRayTraceResult) ray).getEntity();
+        if (!(target instanceof LivingEntity)) {
+            return;
+        }
+
+        LivingEntity living = (LivingEntity) target;
+
+        // DEFLECTION
+        int encDeflection = getMaxEquippedEnchantmentLevel(living, DEFLECTION);
+        if (encDeflection > 0) {
+            AbstractArrowEntity arrow = (AbstractArrowEntity) event.getEntity();
+            int triggerChance = encDeflection * DeflectionEnchantment.chancePerLevel;
+
+            boolean canCancel = true;
+            int sourceID = arrow.field_234610_c_;
+            if (!DeflectionEnchantment.affectsPlayerArrows && sourceID != 0) {
+                Entity source = living.world.getEntityByID(sourceID);
+                canCancel = !(source instanceof PlayerEntity);
+            }
+
+            if (canCancel && living.getRNG().nextInt(100) < triggerChance) {
+                arrow.setDamage(0);
+                arrow.remove();
+                event.setCanceled(true);
+
+                // Damage the item based on the level of the enchantment.
+                // This effect should not be free and that the cost is inversely proportional to the chance of obtaining it.
+                // For example, if this triggers with a low level of deflection then the armor damage will be lower than with a higher level (higher chance).
+                ItemStack stack = living.getItemStackFromSlot(EquipmentSlotType.CHEST);
+                int damage = stack.getDamage() + encDeflection;
+                stack.setDamage(damage);
+
+                if (damage >= stack.getMaxDamage()) {
+                    living.setItemStackToSlot(EquipmentSlotType.CHEST, ItemStack.EMPTY);
+                }
+            }
+        }
     }
+
     // endregion
 
     // region HELPERS
